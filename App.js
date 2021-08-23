@@ -1,11 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, ActivityIndicator, SafeAreaView, ScrollView, FlatList, Alert, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Image, ActivityIndicator, SafeAreaView, ScrollView, FlatList, Alert, RefreshControl, StatusBar } from 'react-native';
 import * as Location from 'expo-location';
 
 const openWeatherKey = `de73f3dc2c5b5450d178038df6c76297`;
-let url = `https://api.openweathermap.org/data/2.5/onecall?lat=44.786568&lon=20.448921&units=metric&exclude=minutely&appid=${openWeatherKey}`
-
+let url = `https://api.openweathermap.org/data/2.5/onecall?&units=metric&exclude=minutely&appid=${openWeatherKey}`;
 
 
 
@@ -17,7 +15,7 @@ const App = () => {
   const loadForecast = async () => {
     setRefreshing(true);
 
-    const { status } = await Location.requestPermissionsAsync();
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission to access location was denied');
     }
@@ -43,15 +41,17 @@ const App = () => {
   })
 
   if (!forecast) {
-    return <SafeAreaView style={styles.loading}>
-      <ActivityIndicator size="large" />
-      </SafeAreaView>;
+    return (
+      <SafeAreaView style={styles.loading}>
+        <ActivityIndicator size="large" />
+      </SafeAreaView>
+      );
   }
 
   const current = forecast.current.weather[0];
-  // TODO: In an upcoming blog post, I'll be extracting components out of this class as you would in a real application.
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar />
       <ScrollView 
         refreshControl={
           <RefreshControl 
